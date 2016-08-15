@@ -1,10 +1,12 @@
+library(MASS)
+
 # Large Scale Simulation
 # setup
 M <- 100 
 p <- 6
 set.seed(123)
 count <- round(runif(100, 30, 300))
-betamat <- array(c(1:6, 6:1, c(1,3,5,5,3,1)), c(6,3))
+betamat <- 2 * array(c(1:6, 6:1, c(1,3,5,5,3,1)), c(6,3))
 Sigma1 <- diag(p)
 Sigma2 <- 2*Sigma1
 Sigma3 <- 0.9^abs(outer(1:p, 1:p, "-")) 
@@ -12,7 +14,7 @@ Sigma4 <- 2 * Sigma3
 
 Blist <- vector("list", M)
 for (i in 1:M){
-  Blist[[i]] <- array(runif(3*p, -1, 1), c(p, 3))
+  Blist[[i]] <- array(runif(3*p, -3, 3), c(p, 3))
 }
 
 xlist <- vector("list", M)
@@ -36,11 +38,16 @@ for (i in 1:M){
 }
 
 # run our procedure
-result <- new_shrinkage(xlist, ylist, 5000, 3000, c(2,3,4))
+result <- new_shrinkage(xlist, ylist, 5000, 2000, c(2,3,4))
+result2 <- new_shrinkage(xlist, ylist, 5000, 5, c(2,3,4))
 
 
-
-
+#
+beta_dis <- rep(0, 81)
+for (i in 1:81){
+  beta_dis[i] <- log(norm(result$betahis[[i]] - result$betahis[[81]], "F"))
+}
+plot(1:81, beta_dis)
 
 
 
